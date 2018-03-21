@@ -1,32 +1,81 @@
 grammar ICSS;
 
-fragment CHAR : [a-z] ;     // match lower-case identifiers
+CHAR : [a-z] ;     // match lower-case identifiers
+HEXCHAR : [a-f] | [A-F] ;     // match lower-case identifiers
+STRING : ([a-z]|[A-Z])+;     // match lower-case identifiers
+DIGITS : [0-9] [0-9]*;
+INT : [0-9];
 WS : [ \t\r\n]+ -> skip ;   // skip spaces, tabs, newlines
 
-stylesheet: WS + EOF;
+/*
+    1 char gaat niet
+    color wordt herkend als nieuwe id tag....
+*/
 
-selector :  'a' + WS + Brackets + EOF; //(A)?|p|div
+stylesheet
+    : block *
+    EOF
+    ;
 
-fragment A
+block
+    :  selectoren (WS?) BRACKETS blockContent BRACKETS
+    ;
+
+blockContent
+    : (row | (row ';')+ row ';'? )?
+    ;
+
+row
+    : styleAttribute WS? ':' property
+    ;
+
+styleAttribute
+    : 'color'
+    | 'background-color'
+    | 'width'
+    | 'height'
+    ;
+
+selectoren
+    : ('#'|'.')? STRING
+    ;
+
+property
+    :  WS? value WS?
+    ;
+
+text
+    :STRING
+    ;
+
+value
+    : '$' STRING // TODO VARIABLE
+    | DIGITS ('px'|'%')
+    | color
+    ;
+
+color
+    :  '#' (HEXCHAR|INT)//(HEXCHAR|INT)(HEXCHAR|INT)(HEXCHAR|INT)(HEXCHAR|INT)(HEXCHAR|INT)
+//    @init { int N = 0; } // TODO Figure out
+//    :  ((CHAR|DIGIT) { N++; } )+ { N <= 6 }
+    ;
+
+LINK
     : 'a'
     | 'A'
     ;
 
-fragment p
+PARAGRAPH
     : 'p'
     | 'P'
     ;
 
-fragment div
+DIV
     : 'div'
     | 'DIV'
     ;
 
-fragment id
-    : '#'
-    ;
-
-fragment Brackets
+BRACKETS
     : '{'
     | '}'
     ;
