@@ -1,0 +1,33 @@
+let $LINK_COLOR is #ff0000;
+let $PAR_WIDTH is 100px;
+let $BROWSER is 2;
+
+p {
+	background-color: #ffffff;
+	width: $PAR_WIDTH;
+}
+a {
+	color: $LINK_COLOR;
+}
+
+#menu {
+	width: $PAR_WIDTH + 20px;
+}
+
+.menu {
+	color: #000000;
+}
+
+body switch $BROWSER
+case 1 {
+    background-color: #ff0000;
+}
+case 2 {
+    background-color: #00ff00;
+}
+case 3 {
+    background-color: #0000ff;
+}
+default {
+    background-color: #ffffff;
+}

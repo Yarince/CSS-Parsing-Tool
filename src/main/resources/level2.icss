@@ -1,0 +1,18 @@
+let $LINK_COLOR is #ff0000;
+let $PAR_WIDTH is 500px;
+
+p {
+	background-color: #ffffff;
+	width: $PAR_WIDTH;
+}
+a {
+	color: $LINK_COLOR;
+}
+
+#menu {
+	width: $PAR_WIDTH + 2 * 10px;
+}
+
+.menu {
+	color: #000000;
+}
