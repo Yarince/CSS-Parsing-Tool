@@ -1,81 +1,96 @@
 grammar ICSS;
 
-CHAR : [a-z] ;     // match lower-case identifiers
-HEXCHAR : [a-f] | [A-F] ;     // match lower-case identifiers
-STRING : ([a-z]|[A-Z])+;     // match lower-case identifiers
-DIGITS : [0-9] [0-9]*;
-INT : [0-9];
-WS : [ \t\r\n]+ -> skip ;   // skip spaces, tabs, newlines
+// Lexer rules
 
-/*
-    1 char gaat niet
-    color wordt herkend als nieuwe id tag....
-*/
+COLOR :  '#' HEXCHAR HEXCHAR HEXCHAR HEXCHAR HEXCHAR HEXCHAR ;
+BRACKET : '{' | '}' ;
+
+COLOR_PROP : 'color' ;
+BACKGROUND_COLOR_PROP : 'background-color' ;
+WIDTH_PROP : 'width' ;
+HEIGHT_PROP : 'height' ;
+ID : '#' STRING ;
+CLASS : '.' STRING ;
+PIXEL : DIGITS 'px';
+PERCENTAGE : DIGITS '%';
+
+WS : [ \t\r\n]+ -> skip ;           // skip spaces, tabs, newlines
+STRING : CHAR+ ;                    // match lower-case identifiers
+VARIABLE : '$'[a-zA-Z_]+ ;          // match lower-case identifiers
+DIGITS : INT+ ;                   // match digits
+fragment INT : [0-9] ;                   // match digits
+fragment HEXCHAR : [0-9a-fA-F] ;    // match hexadecimal chars
+fragment CHAR : [a-zA-Z] ;          // match char
+
+// Parser rules
 
 stylesheet
-    : block *
+    : (variableInit
+    | block
+    | switchcase)*
     EOF
     ;
 
+/*
+    Variable
+*/
+
+variableInit
+    : 'let' variable 'is' (value|DIGITS) ';'
+    ;
+
+variable
+    : VARIABLE
+    ;
+
+switchcase
+    : selectoren 'switch' VARIABLE  caseOption+ defaultOptioin?
+    ;
+
+caseOption
+    : 'case'  (value | DIGITS) BRACKET blockContent BRACKET
+    ;
+
+defaultOptioin
+    : 'default' BRACKET blockContent BRACKET
+    ;
+
+/*
+    Sytle block
+*/
 block
-    :  selectoren (WS?) BRACKETS blockContent BRACKETS
+    :  selectoren BRACKET blockContent BRACKET
     ;
 
 blockContent
-    : (row | (row ';')+ row ';'? )?
+    : (row ';'?) | ((row ';')+ row ';'? )?
     ;
 
+// set value and do optional calculation
 row
-    : styleAttribute WS? ':' property
+    : styleAttribute ':' value value_calc*
     ;
 
 styleAttribute
-    : 'color'
-    | 'background-color'
-    | 'width'
-    | 'height'
+    : COLOR_PROP
+    | BACKGROUND_COLOR_PROP
+    | WIDTH_PROP
+    | HEIGHT_PROP
     ;
 
 selectoren
-    : ('#'|'.')? STRING
-    ;
-
-property
-    :  WS? value WS?
-    ;
-
-text
-    :STRING
+    : ID
+    | CLASS
+    | STRING
     ;
 
 value
-    : '$' STRING // TODO VARIABLE
-    | DIGITS ('px'|'%')
-    | color
+    : variable
+    | PERCENTAGE
+    | PIXEL
+    | COLOR
     ;
 
-color
-    :  '#' (HEXCHAR|INT)//(HEXCHAR|INT)(HEXCHAR|INT)(HEXCHAR|INT)(HEXCHAR|INT)(HEXCHAR|INT)
-//    @init { int N = 0; } // TODO Figure out
-//    :  ((CHAR|DIGIT) { N++; } )+ { N <= 6 }
-    ;
-
-LINK
-    : 'a'
-    | 'A'
-    ;
-
-PARAGRAPH
-    : 'p'
-    | 'P'
-    ;
-
-DIV
-    : 'div'
-    | 'DIV'
-    ;
-
-BRACKETS
-    : '{'
-    | '}'
+value_calc
+    : ('+' | '*' | '-' ) (DIGITS | value)?
     ;
