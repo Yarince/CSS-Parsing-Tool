@@ -112,6 +112,7 @@ public class ASTListener extends ICSSBaseListener {
     @Override
     public void exitValue(ICSSParser.ValueContext ctx) {
         Expression literal;
+
         if (ctx.COLOR() != null) literal = new ColorLiteral(ctx.COLOR().getText());
         else if (ctx.PERCENTAGE() != null) literal = new PercentageLiteral(ctx.PERCENTAGE().getText());
         else if (ctx.PIXEL() != null) literal = new PixelLiteral(ctx.PIXEL().getText());
