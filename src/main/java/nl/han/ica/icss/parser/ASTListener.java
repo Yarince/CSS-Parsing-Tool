@@ -1,12 +1,9 @@
 package nl.han.ica.icss.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Stack;
 
 import nl.han.ica.icss.ast.*;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
  * This class extracts the ICSS Abstract Syntax Tree from the Antlr Parse tree.
@@ -15,71 +12,90 @@ public class ASTListener extends ICSSBaseListener {
 
     //Accumulator attributes:
     private AST ast;
-    private Stack<ASTNode> currentContainer; //This is a hint...
+    private Stack<ASTNode> currentContainer;
 
     public ASTListener() {
         ast = new AST();
         currentContainer = new Stack<>();
-
-//        ast.root = (Stylesheet) currentContainer.pop();
-
     }
+
+    // I've chosen not to use the ".addChild" function too much for clarity of function.
 
     @Override
     public void exitStylesheet(ICSSParser.StylesheetContext ctx) {
-        Stylesheet node = new Stylesheet();
+        Stylesheet node = new Stylesheet(new ArrayList<>());
+
+        while (!currentContainer.isEmpty())
+            node.addChild(currentContainer.pop());
+
+        ast.root = node;
     }
 
     @Override
     public void exitVariableInit(ICSSParser.VariableInitContext ctx) {
-        super.exitVariableInit(ctx);
-    }
+        ConstantDefinition definition = new ConstantDefinition();
 
-    @Override
-    public void exitVariable(ICSSParser.VariableContext ctx) {
-        super.exitVariable(ctx);
+        definition.name = new ConstantReference(ctx.getChild(1).getText());
+
+        definition.addChild(currentContainer.pop());
+
+        currentContainer.add(definition);
     }
 
     @Override
     public void exitSwitchCase(ICSSParser.SwitchCaseContext ctx) {
+        SwitchRule switchRule = new SwitchRule();
 
+        switchRule.defaultCase = (SwitchDefaultCase) currentContainer.pop();
+
+        while (currentContainer.peek() instanceof SwitchValueCase)
+            switchRule.addChild(currentContainer.pop());
+
+        switchRule.selector = (Selector) currentContainer.pop();
+        switchRule.match = new ConstantReference(ctx.VARIABLE().getText());
+
+        currentContainer.add(switchRule);
     }
 
     @Override
     public void exitCaseOption(ICSSParser.CaseOptionContext ctx) {
-        super.exitCaseOption(ctx);
+        SwitchValueCase valueCase = new SwitchValueCase();
+
+        while (currentContainer.peek() instanceof Declaration)
+            valueCase.addChild(currentContainer.pop());
+
+        valueCase.value = (Expression) currentContainer.pop();
+        currentContainer.add(valueCase);
     }
 
     @Override
     public void exitDefaultOption(ICSSParser.DefaultOptionContext ctx) {
+        SwitchDefaultCase defaultCase = new SwitchDefaultCase();
 
+        while (currentContainer.peek() instanceof Declaration)
+            defaultCase.addChild(currentContainer.pop());
+
+        currentContainer.add(defaultCase);
     }
 
     @Override
     public void exitBlock(ICSSParser.BlockContext ctx) {
-        super.exitBlock(ctx);
-    }
+        StyleRule styleRule = new StyleRule();
 
-    @Override
-    public void exitBlockContent(ICSSParser.BlockContentContext ctx) {
-        super.exitBlockContent(ctx);
+        while (currentContainer.peek() instanceof Declaration)
+            styleRule.addChild(currentContainer.pop());
+
+        styleRule.selector = (Selector) currentContainer.pop();
+
+        currentContainer.add(styleRule);
     }
 
     @Override
     public void exitRow(ICSSParser.RowContext ctx) {
-        super.exitRow(ctx);
-    }
+        Declaration declaration = new Declaration(ctx.styleAttribute().getText());
+        declaration.addChild(currentContainer.pop());
 
-    @Override
-    public void exitStyleAttribute(ICSSParser.StyleAttributeContext ctx) {
-        Stylerule stylerule;
-        String name = ctx.getText();
-//        if (ctx.BACKGROUND_COLOR_PROP()
-//                != null) stylerule = new ClassSelector(name);
-//        else if (ctx.ID() != null) stylerule = new IdSelector(name);
-//        else stylerule = new TagSelector(name);
-//
-//        currentContainer.add(stylerule);
+        currentContainer.add(declaration);
     }
 
     @Override
@@ -95,17 +111,28 @@ public class ASTListener extends ICSSBaseListener {
 
     @Override
     public void exitValue(ICSSParser.ValueContext ctx) {
-        super.exitValue(ctx);
+        Expression literal;
+        if (ctx.COLOR() != null) literal = new ColorLiteral(ctx.COLOR().getText());
+        else if (ctx.PERCENTAGE() != null) literal = new PercentageLiteral(ctx.PERCENTAGE().getText());
+        else if (ctx.PIXEL() != null) literal = new PixelLiteral(ctx.PIXEL().getText());
+        else if (ctx.VARIABLE() != null) literal = new ConstantReference(ctx.getChild(0).getText());
+        else literal = new ScalarLiteral(ctx.DIGITS().getText());
+
+
+        currentContainer.add(literal);
     }
 
     @Override
-    public void exitValue_calc(ICSSParser.Value_calcContext ctx) {
-        super.exitValue_calc(ctx);
-    }
+    public void exitValueCalc(ICSSParser.ValueCalcContext ctx) {
+        Operation operation;
+        if (ctx.ADDITION() != null) operation = new AddOperation();
+        else if (ctx.MULTIPLICATION() != null) operation = new MultiplyOperation();
+        else operation = new SubtractOperation();
 
-    @Override
-    public void exitEveryRule(ParserRuleContext ctx) {
-        super.exitEveryRule(ctx);
+        operation.rhs = (Expression) currentContainer.pop();
+        operation.lhs = (Expression) currentContainer.pop();
+
+        currentContainer.add(operation);
     }
 
     public AST getAST() {

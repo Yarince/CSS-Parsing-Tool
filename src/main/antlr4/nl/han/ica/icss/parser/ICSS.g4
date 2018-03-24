@@ -13,11 +13,16 @@ ID : '#' STRING ;
 CLASS : '.' STRING ;
 PIXEL : DIGITS 'px';
 PERCENTAGE : DIGITS '%';
+ADDITION : '+' ;
+MULTIPLICATION : '*' ;
+SUBSTRACTION : '-' ;
 
 WS : [ \t\r\n]+ -> skip ;           // skip spaces, tabs, newlines
-STRING : CHAR+ ;                    // match lower-case identifiers
 VARIABLE : '$'[a-zA-Z_]+ ;          // match lower-case identifiers
+TAG : STRING ;
 DIGITS : INT+ ;                   // match digits
+
+fragment STRING : CHAR+ ;                    // match lower-case identifiers
 fragment INT : [0-9] ;                   // match digits
 fragment HEXCHAR : [0-9a-fA-F] ;    // match hexadecimal chars
 fragment CHAR : [a-zA-Z] ;          // match char
@@ -25,9 +30,9 @@ fragment CHAR : [a-zA-Z] ;          // match char
 // Parser rules
 
 stylesheet
-    : (variableInit
+    : ( variableInit
     | block
-    | switchCase)*
+    | switchCase ) *
     EOF
     ;
 
@@ -36,11 +41,7 @@ stylesheet
 */
 
 variableInit
-    : 'let' variable 'is' (value|DIGITS) ';'
-    ;
-
-variable
-    : VARIABLE
+    : 'let' VARIABLE 'is' value ';'
     ;
 
 switchCase
@@ -48,7 +49,7 @@ switchCase
     ;
 
 caseOption
-    : 'case'  (value | DIGITS) BRACKET blockContent BRACKET
+    : 'case'  value BRACKET blockContent BRACKET
     ;
 
 defaultOption
@@ -68,7 +69,7 @@ blockContent
 
 // set value and do optional calculation
 row
-    : styleAttribute ':' value value_calc*
+    : styleAttribute ':' value valueCalc*
     ;
 
 styleAttribute
@@ -81,16 +82,17 @@ styleAttribute
 selectors
     : ID
     | CLASS
-    | STRING
+    | TAG
     ;
 
 value
-    : variable
+    : VARIABLE
     | PERCENTAGE
     | PIXEL
     | COLOR
+    | DIGITS
     ;
 
-value_calc
-    : ('+' | '*' | '-' ) (DIGITS | value)?
+valueCalc
+    : (ADDITION | MULTIPLICATION | SUBSTRACTION ) value?
     ;

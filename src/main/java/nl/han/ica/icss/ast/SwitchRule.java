@@ -2,7 +2,7 @@ package nl.han.ica.icss.ast;
 
 import java.util.ArrayList;
 
-public class Switchrule extends ASTNode {
+public class SwitchRule extends ASTNode {
 
     public Selector selector;
     public Expression match;

@@ -9,6 +9,11 @@ public class Declaration extends ASTNode {
 	public String property;
 	public Expression expression;
 
+	public Declaration(String property) {
+		this.property = property;
+	}
+	public Declaration(){}
+
 	@Override
 	public String getNodeLabel() {
 	    return "Declaration (" + property + ")";

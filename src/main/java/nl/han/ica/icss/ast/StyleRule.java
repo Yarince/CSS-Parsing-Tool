@@ -2,22 +2,22 @@ package nl.han.ica.icss.ast;
 
 import java.util.ArrayList;
 
-public class Stylerule extends ASTNode {
+public class StyleRule extends ASTNode {
 	
 	public Selector selector;
 	public ArrayList<ASTNode> body = new ArrayList<>();
 
-    public Stylerule() {
+    public StyleRule() {
     }
 
-    public Stylerule(Selector selector, ArrayList<ASTNode> body) {
+    public StyleRule(Selector selector, ArrayList<ASTNode> body) {
     	this.selector = selector;
     	this.body = body;
     }
 
     @Override
 	public String getNodeLabel() {
-		return "Stylerule";
+		return "StyleRule";
 	}
 	@Override
 	public ArrayList<ASTNode> getChildren() {
