@@ -27,7 +27,7 @@ fragment CHAR : [a-zA-Z] ;          // match char
 stylesheet
     : (variableInit
     | block
-    | switchcase)*
+    | switchCase)*
     EOF
     ;
 
@@ -43,15 +43,15 @@ variable
     : VARIABLE
     ;
 
-switchcase
-    : selectoren 'switch' VARIABLE  caseOption+ defaultOptioin?
+switchCase
+    : selectors 'switch' VARIABLE  caseOption+ defaultOption?
     ;
 
 caseOption
     : 'case'  (value | DIGITS) BRACKET blockContent BRACKET
     ;
 
-defaultOptioin
+defaultOption
     : 'default' BRACKET blockContent BRACKET
     ;
 
@@ -59,7 +59,7 @@ defaultOptioin
     Sytle block
 */
 block
-    :  selectoren BRACKET blockContent BRACKET
+    :  selectors BRACKET blockContent BRACKET
     ;
 
 blockContent
@@ -78,7 +78,7 @@ styleAttribute
     | HEIGHT_PROP
     ;
 
-selectoren
+selectors
     : ID
     | CLASS
     | STRING
