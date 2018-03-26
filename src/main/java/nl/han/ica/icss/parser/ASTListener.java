@@ -1,6 +1,7 @@
 package nl.han.ica.icss.parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Stack;
 
 import nl.han.ica.icss.ast.*;
@@ -137,6 +138,8 @@ public class ASTListener extends ICSSBaseListener {
     }
 
     public AST getAST() {
+        // TODO
+        Collections.reverse(ast.root.getChildren());
         return ast;
     }
 }
