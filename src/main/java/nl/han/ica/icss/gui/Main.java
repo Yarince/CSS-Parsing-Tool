@@ -246,7 +246,7 @@ public class Main extends Application implements ANTLRErrorListener {
             feedbackPane.clear();
             feedbackPane.addLine("Checking...");
 
-            (new Checker()).check(this.ast);
+            (new Checker()).checkNode(this.ast);
 
             ArrayList<SemanticError> errors = this.ast.getErrors();
             if (!errors.isEmpty()) {
