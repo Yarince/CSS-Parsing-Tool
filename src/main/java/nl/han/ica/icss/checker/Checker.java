@@ -160,6 +160,7 @@ public class Checker {
                 node.setError(String.format("You can only multiply with scalar types. At %s ", node.getNodeLabel()));
                 return ExpressionType.UNDEFINED;
             }
+            return right != ExpressionType.SCALAR ? right : left;
         } else if (node instanceof SubtractOperation || node instanceof AddOperation) {
             if (left != right) {
                 node.setError(String.format("You can only %s the same types.", node.getNodeLabel()));
@@ -167,7 +168,7 @@ public class Checker {
             }
         }
 
-        return ExpressionType.UNDEFINED;
+        return left;
     }
 
     /**

@@ -127,8 +127,8 @@ public class ASTListener extends ICSSBaseListener {
     @Override
     public void exitValueCalc(ICSSParser.ValueCalcContext ctx) {
         Operation operation;
-        if (ctx.ADDITION() != null) operation = new AddOperation();
-        else if (ctx.MULTIPLICATION() != null) operation = new MultiplyOperation();
+        if (ctx.MULTIPLICATION() != null) operation = new MultiplyOperation();
+        else if (ctx.ADDITION() != null) operation = new AddOperation();
         else operation = new SubtractOperation();
 
         operation.rhs = (Expression) currentContainer.pop();

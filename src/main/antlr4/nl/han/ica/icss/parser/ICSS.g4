@@ -69,7 +69,7 @@ blockContent
 
 // set value and do optional calculation
 row
-    : styleAttribute ':' value valueCalc*
+    : styleAttribute ':' value valueCalc?
     ;
 
 styleAttribute
@@ -94,5 +94,5 @@ value
     ;
 
 valueCalc
-    : (ADDITION | MULTIPLICATION | SUBSTRACTION ) value?
+    : (ADDITION | MULTIPLICATION | SUBSTRACTION ) value valueCalc?
     ;
