@@ -41,7 +41,7 @@ stylesheet
 */
 
 variableInit
-    : 'let' VARIABLE 'is' value ';'
+    : 'let' VARIABLE 'is' value valueCalc* ';'
     ;
 
 switchCase

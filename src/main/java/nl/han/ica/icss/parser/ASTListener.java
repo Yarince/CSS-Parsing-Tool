@@ -138,7 +138,6 @@ public class ASTListener extends ICSSBaseListener {
     }
 
     public AST getAST() {
-        // TODO
         Collections.reverse(ast.root.getChildren());
         return ast;
     }
