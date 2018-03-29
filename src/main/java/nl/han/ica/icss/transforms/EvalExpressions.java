@@ -22,10 +22,13 @@ public class EvalExpressions implements Transform {
     private void makeLiteral(ASTNode node) {
 
         for (ASTNode child : node.getChildren()) {
-            if (child instanceof Expression)
-                node = getLiteral((Expression) child);
-
-            makeLiteral(child);
+            if (child instanceof ConstantDefinition)
+                continue;
+            if (child instanceof Expression) {
+                node.addChild(getLiteral((Expression) child));
+            }
+            if (child.getChildren().size() > 0)
+                makeLiteral(child);
         }
     }
 
@@ -37,7 +40,6 @@ public class EvalExpressions implements Transform {
         Expression literal = node;
 
         if (node instanceof ConstantReference) {
-//            if (literal instanceof Literal)
             literal = symbolTable.get(((ConstantReference) node).name).expression;
         } else if (node instanceof Operation) {
             literal = execOperation((Operation) node);
@@ -68,6 +70,7 @@ public class EvalExpressions implements Transform {
         if (node.rhs instanceof OperationalLiteral) rhs = (OperationalLiteral) node.rhs;
         else rhs = (OperationalLiteral) getLiteral(node.rhs);
 
+        // Check the specific Operations
         if (node instanceof MultiplyOperation) {
             if (lhs instanceof ScalarLiteral) {
                 rhs.value = lhs.value * rhs.value;
@@ -78,7 +81,7 @@ public class EvalExpressions implements Transform {
         } else if (node instanceof SubtractOperation) {
             lhs.value = lhs.value - rhs.value;
             return lhs;
-        } else {// it must be a AddOperation.
+        } else { // Then it must be a AddOperation.
             lhs.value = lhs.value + rhs.value;
             return lhs;
         }
