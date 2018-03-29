@@ -29,26 +29,13 @@ public class Checker {
 //        findConstants(ast.root);
 
         //Save the symbol table.
-        ast.symboltable = symbolTable;
+        ast.symbolTable = symbolTable;
 
         checkNode(ast.root);
 
         //Save the verdict
         if (ast.getErrors().isEmpty()) {
             ast.checked = true;
-        }
-    }
-
-    /**
-     * Add all constant definitions to the symbolTable
-     *
-     * @param node to be checked
-     */
-    private void findConstants(ASTNode node) {
-
-
-        if (node.getChildren().size() > 0) {
-            node.getChildren().forEach(this::findConstants);
         }
     }
 
@@ -140,9 +127,6 @@ public class Checker {
         ExpressionType left;
         ExpressionType right;
 
-        // TODO CHECK AGAIN @ Level 2
-        // Fs up when the calculation rules are invalid! Why is this in the program.
-
         // Check if left side of operation is another operation
         if (node.lhs instanceof Operation) {
             left = checkOperation((Operation) node.lhs);
@@ -153,6 +137,11 @@ public class Checker {
             right = checkOperation((Operation) node.rhs);
         } else {
             right = checkValueType(node.rhs);
+        }
+
+        if (left == ExpressionType.COLOR || right == ExpressionType.COLOR) {
+            node.setError(String.format("You're not allowed to use color in a operation. At %s", node.getNodeLabel()));
+            return ExpressionType.UNDEFINED;
         }
 
         if (node instanceof MultiplyOperation) {

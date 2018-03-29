@@ -1,8 +1,6 @@
 package nl.han.ica.icss.ast;
 
-public class PixelLiteral extends Literal {
-    public int value;
-
+public class PixelLiteral extends OperationalLiteral {
     public PixelLiteral(int value) {
         this.value = value;
     }

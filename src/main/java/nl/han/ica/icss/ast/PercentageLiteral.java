@@ -1,8 +1,6 @@
 package nl.han.ica.icss.ast;
 
-public class PercentageLiteral extends Literal {
-    public int value;
-
+public class PercentageLiteral extends OperationalLiteral {
     public PercentageLiteral(int value) {
         this.value = value;
     }

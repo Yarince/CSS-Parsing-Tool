@@ -11,14 +11,14 @@ public class AST {
 
 	//The symbol table.
 	//We only need to track assignments in the symbol table.
-	public HashMap<String,ConstantDefinition> symboltable;
+	public HashMap<String,ConstantDefinition> symbolTable;
 
 	//Keep track of whether this AST was typechecked
 	public boolean checked;
 
 	public AST() {
 		root = new Stylesheet();
-		symboltable = new HashMap<>();
+		symbolTable = new HashMap<>();
 		checked = false;
 	}
 	public AST(Stylesheet root) {
