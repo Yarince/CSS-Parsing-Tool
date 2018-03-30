@@ -4,9 +4,11 @@ import nl.han.ica.icss.ast.*;
 
 public class Generator {
 
-    private StringBuilder build = new StringBuilder();
+    private StringBuilder build;
 
     public String generate(AST ast) {
+
+        build = new StringBuilder();
 
         loopChildren(ast.root);
 
@@ -22,25 +24,26 @@ public class Generator {
 
     private void getString(ASTNode node) {
         if (node instanceof StyleRule) {
+
             build.append(((StyleRule) node).selector).append(" {\n");
-            loopChildren(node);
+
+            for (ASTNode declarationNode : node.getChildren()) {
+                if (declarationNode instanceof Declaration) {
+                    Declaration declaration = (Declaration) declarationNode;
+                    build.append("\t").append(declaration.property).append(": ");
+                    Expression literal = declaration.expression;
+
+                    if (literal instanceof PixelLiteral)
+                        build.append(((PixelLiteral) literal).value).append("px;");
+                    else if (literal instanceof PercentageLiteral)
+                        build.append(((PercentageLiteral) literal).value).append("%;");
+                    else if (literal instanceof ColorLiteral)
+                        build.append(((ColorLiteral) literal).value).append(";");
+                    build.append("\n");
+                }
+            }
+
             build.append("} \n \n");
         }
-        for (ASTNode child : node.getChildren()) {
-
-            if (child instanceof Declaration)
-                build.append(((Declaration) child).property).append(": ");
-            else if (child instanceof Expression) {
-                if (child instanceof PixelLiteral)
-                    build.append(((PixelLiteral) child).value).append("px;");
-                if (child instanceof PercentageLiteral)
-                    build.append(((PercentageLiteral) child).value).append("%;");
-                if (child instanceof ColorLiteral)
-                    build.append(((ColorLiteral) child).value).append(";");
-                build.append("\n");
-            }
-        }
-
-
     }
 }

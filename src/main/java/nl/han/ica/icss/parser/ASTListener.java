@@ -46,16 +46,17 @@ public class ASTListener extends ICSSBaseListener {
     @Override
     public void exitSwitchCase(ICSSParser.SwitchCaseContext ctx) {
         SwitchRule switchRule = new SwitchRule();
+        if (currentContainer.peek() instanceof SwitchDefaultCase) {
+            switchRule.defaultCase = (SwitchDefaultCase) currentContainer.pop();
 
-        switchRule.defaultCase = (SwitchDefaultCase) currentContainer.pop();
+            while (currentContainer.peek() instanceof SwitchValueCase)
+                switchRule.addChild(currentContainer.pop());
 
-        while (currentContainer.peek() instanceof SwitchValueCase)
-            switchRule.addChild(currentContainer.pop());
+            switchRule.selector = (Selector) currentContainer.pop();
+            switchRule.match = new ConstantReference(ctx.VARIABLE().getText());
 
-        switchRule.selector = (Selector) currentContainer.pop();
-        switchRule.match = new ConstantReference(ctx.VARIABLE().getText());
-
-        currentContainer.add(switchRule);
+            currentContainer.add(switchRule);
+        }
     }
 
     @Override
