@@ -26,7 +26,6 @@ public class EvalExpressions implements Transform {
                 if (child instanceof Expression) {
                     node.addChild(getLiteral((Expression) child));
                 } else if (child instanceof SwitchRule) {
-                    // TODO WHY U SO UGLY
                     toBeAdded.add(workoutSwitchCase((SwitchRule) child));
                 }
 
