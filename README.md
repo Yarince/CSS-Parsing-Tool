@@ -9,10 +9,13 @@ gemaakt en alle onderdelen zijn in minimale vorm aanwezig. De opdracht bestaat u
 de tool door middel van serie deelopdrachten.
 
 ## ICSS-18-2 : Informele Specificatie
+
 ICSS is een opmaaktaal vergelijkbaar met Cascading Stylesheets (CSS). Het heeft niet alle mogelijkheden van
 CSS, maar tegelijkertijd heeft het ook een aantal features die CSS niet heeft.
 Dit document beschrijft op informele wijze mogelijkheden van de ICSS-18-2 versie van ICSS.
+
 ###Eenvoudige opmaak
+
 ICSS gebruikt net als CSS regels om de opmaak van HTML elementen aan te geven. Een stylesheet bestaat
 uit een aantal regels die na elkaar worden toegepast op een HTML document.
 Regels hebben de vorm `<selector> { <declaraties> }`. Hierin is de selector ofwel een specifiek type tag
@@ -37,6 +40,7 @@ color: #00ffff;
 }
 ```
 ####Beperkingen
+
 ICSS is beperkter dan CSS. Dit zijn de beperkingen:
 * Selectoren zijn allemaal lowercase.
 * Selectoren selecteren maar op één ding tegelijk. Combinaties zoals a.active zijn niet toegestaan.
@@ -46,7 +50,9 @@ ICSS is beperkter dan CSS. Dit zijn de beperkingen:
 opgegeven worden. (Bijvoorbeeld: #00ff00)
 * Voor groottes mag of een waarde in pixels `(bijvoorbeeld: 100px)` of een percentage `(bijvoorbeeld 50%)`
 gespecifieerd worden.
+
 ###Constantes
+
 Een feature die CSS niet heeft, maar ICSS wel is de definitie van constante waardes. In ICSS kun je expressies
 een naam geven en dan op meerdere plaatsen waar je anders een waarde zou invullen die naam gebruiken.
 
@@ -58,7 +64,9 @@ Je kunt natuurlijk ook constantes uitdrukken op basis van een andere constante: 
 
 Alle constantes moeten bovenaan het document gedefinieerd worden en hebben een globale scope. Ze zijn
 volledig uppercase geschreven. Je mag constantes gebruiken voordat ze gedefinieerd zijn.
+
 ###Berekende waardes
+
 Een andere uitbreiding in ICSS is de mogelijkheid om eenvoudige berekeningen te doen met waardes. In ICSS
 mag je pixelwaardes en percentages optellen en aftrekken en vermenigvuldigen. Dit mag zowel in stijldeclaraties
 van attributen als in de definifitie van constanten.
@@ -79,6 +87,7 @@ let $MENUSIZE is $HEADERSIZE - 20%;
 Je mag alleen pixelwaardes bij pixelwaardes optellen en percentages bij percentages. Kleuren kun je niet
 optellen. Vermenigvuldigen gaat met scalaire waarden zoals 42 of 3. Die kun je onderling ook optellen of
 vermenigvuldigen. Je mag deze waarden natuurlijk niet gebruiken als waarde van attributen.
+
 ###Selectie van stijlregels
 
 Je kunt in ICSS een keuze maken tussen verschillende varianten van regels. Hiervoor is er switch/case constructie.
